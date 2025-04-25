@@ -1,4 +1,4 @@
-﻿using MazeGame.Engine.GameEngine.Models;
+﻿using MazeGame.Engine.GameEngine.Models.Maze;
 using MazeGame.Engine.GameEngine.Utils;
 
 namespace MazeGame.Engine.GameEngine.GeneratingAlgorithms;

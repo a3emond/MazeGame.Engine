@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using MazeGame.Engine.GameEngine.Models;
+using MazeGame.Engine.GameEngine.Models.Maze;
 
 namespace MazeGame.Engine.GameEngine.GeneratingAlgorithms;
 

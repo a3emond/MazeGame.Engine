@@ -1,4 +1,4 @@
-﻿namespace MazeGame.Engine.GameEngine.Models;
+﻿namespace MazeGame.Engine.GameEngine.Models.Maze;
 
 public enum TileType
 {

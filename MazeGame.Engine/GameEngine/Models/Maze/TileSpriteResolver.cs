@@ -1,12 +1,12 @@
-﻿namespace MazeGame.Engine.GameEngine.Models;
+﻿namespace MazeGame.Engine.GameEngine.Models.Maze;
 
-public static class TileTypeExtensions
+public static class TileSpriteResolver
 {
     private static readonly Random Rand = new();
 
     public static string GetTileSprite(this TileType tileType)
     {
-        return tileType switch
+        return tileType switch //TODO: find another way to randomize tiles avoiding multiple random calls
         {
             TileType.EmptyBlack => "/assets/textures/plain_empty_black.png",
             TileType.Start => $"/assets/textures/floor_center_{Rand.Next(1, 15)}.png",

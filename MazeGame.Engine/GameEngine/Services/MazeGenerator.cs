@@ -1,6 +1,6 @@
 ﻿using MazeGame.Engine.GameEngine.GeneratingAlgorithms;
-using MazeGame.Engine.GameEngine.Models;
-using MazeGame.Engine.GameEngine.Utils.GeneratingAlgorithms;
+using MazeGame.Engine.GameEngine.Models.Maze;
+using MazeGame.Engine.GameEngine.Utils;
 
 namespace MazeGame.Engine.GameEngine.Services;
 
@@ -45,7 +45,13 @@ public class MazeGenerator
 
         TileProcessor.Process(_maze);
 
-        _maze.InitializeStartAndGoal();
+        var start = MazeAnalysis.FindStartPosition(_maze);
+        var goal = MazeAnalysis.FindGoalPosition(_maze, start);
+
+        _maze.SetStartAndGoal(start, goal);
+
+        // Generate items?
+        MazeItemSpawner.GenerateItems(_maze);
 
 
         return _maze; // Return the generated maze

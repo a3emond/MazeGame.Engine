@@ -1,4 +1,4 @@
-﻿namespace MazeGame.Engine.GameEngine.Models;
+﻿namespace MazeGame.Engine.GameEngine.Models.Others;
 
 public class FogOfWar
 {

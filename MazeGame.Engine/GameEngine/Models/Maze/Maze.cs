@@ -1,6 +1,6 @@
-﻿using MazeGame.Engine.GameEngine.Utils;
+﻿using MazeGame.Engine.GameEngine.Models.Item;
 
-namespace MazeGame.Engine.GameEngine.Models;
+namespace MazeGame.Engine.GameEngine.Models.Maze;
 
 public class Maze
 {
@@ -25,39 +25,16 @@ public class Maze
 
     public void SetStartAndGoal((int, int) start, (int, int) goal)
     {
+        // Set the start and goal positions
         StartPosition = start;
         GoalPosition = goal;
+        // Mark the start and goal positions in the grid
         Grid[start.Item1, start.Item2] = (int)TileType.Start;
         Grid[goal.Item1, goal.Item2] = (int)TileType.Goal;
-    }
-
-    public void InitializeStartAndGoal()
-    {
-        var start = MazeUtils.FindStartPosition(this);
-        var goal = MazeUtils.FindGoalPosition(this, start);
-        SetStartAndGoal(start, goal);
-    }
-
-    // Helper to check if an item is at a given position
-    public bool HasItemAt(int x, int y)
-    {
-        return ItemGrid.GetItemAt(x, y) != null;
-    }
-
-    // Helper to spawn an item in a valid location
-    public void SpawnItem(ItemName name, string sprite,bool walkable, bool interactable, bool collectible, ItemEffect effect)
-    {
-        var position = MazeUtils.GetRandomWalkableTile(this);
-
-        if (position.HasValue)
-        {
-            ItemGrid.AddItem(name, position.Value.x, position.Value.y, sprite, walkable ,interactable, collectible, effect);
-        }
     }
 
     public bool IsWalkable(int x, int y)
     {
         return WalkableTiles.Contains((x, y));
     }
-
 }

@@ -1,4 +1,4 @@
-﻿using MazeGame.Engine.GameEngine.Models;
+﻿using MazeGame.Engine.GameEngine.Models.Maze;
 
 namespace MazeGame.Engine.GameEngine.Services;
 
@@ -159,7 +159,7 @@ public static class TileProcessor
             maze.Grid[x, y] = (int)category.Key; // Assign correct tile type
     }
 
-    private static void IdentifyWalkableTiles(Maze maze)
+    private static void IdentifyWalkableTiles(Maze maze) //TODO: refactor it to work any time in the processing (should check for any floor tile)
     {
         maze.WalkableTiles.Clear();
         for (var y = 0; y < maze.Height; y++)
@@ -168,9 +168,4 @@ public static class TileProcessor
                 maze.WalkableTiles.Add((x, y));
     }
 
-    public static string GetTileSprite(Maze maze, int x, int y)
-    {
-        var tile = (TileType)maze.Grid[x, y];
-        return tile.GetTileSprite(); // Call the extension method
-    }
 }
