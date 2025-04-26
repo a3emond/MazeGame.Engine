@@ -6,7 +6,7 @@ using MazeGame.Engine.GameEngine.Services;
 
 namespace MazeGame.Engine.API;
 
-public class MazeGameCore
+public class MazeGameCore //Pure backend game logic engine. No API exposure. Only mutates the internal GameState.
 {
     private readonly MazeGameService _gameService;
     private readonly GameState _state;
@@ -60,7 +60,6 @@ public class MazeGameCore
         // If timer reached 0, trigger game over automatically
         if (_state.Timer <= TimeSpan.Zero)
         {
-            _state.Timer.Equals(TimeSpan.Zero); // not necessary anymore actually
             EndGame();
             return false;
         }
@@ -73,19 +72,23 @@ public class MazeGameCore
     // 🎮 Player Actions
     // =====================
 
-    public string? Step(string direction)
+    public void Step(string direction)
     {
         if (!_state.GameStarted || _state.GameOver || _state.Player == null)
-            return null;
+            return;
+
+        if (!UpdateTimer())
+        {
+            // Timer expired and game ended during this tick
+            return;
+        }
 
         PlayerMovementService.Move(_state.Player, direction, _state.Maze!);
         HandlePickup();
-
-        if (CheckWinCondition()) return "Win";
-        if (CheckLoseCondition()) return "GameOver";
-
-        return null;
+        CheckWinCondition();
+        CheckLoseCondition();
     }
+
 
     private void HandlePickup()
     {
@@ -158,38 +161,5 @@ public class MazeGameCore
         return false;
     }
 
-    // =====================
-    // 📤 API Data Exposure
-    // =====================
-
-    public GameState GetFullState() => _state;
-
-    public GameStateDTO GetLightweightState()
-    {
-        return new GameStateDTO
-        {
-            X = _state.Player?.X ?? 0,
-            Y = _state.Player?.Y ?? 0,
-            Direction = _state.Player?.Direction ?? "down",
-            LightRadius = _state.Player?.LightRadius ?? 3,
-            CurrentHearts = _state.CurrentHearts,
-            MaxHearts = _state.MaxHearts,
-            TimerSeconds = (int)_state.Timer.TotalSeconds,
-            Inventory = _state.InventorySlots,
-            Status = _state.StatusEffect ?? "",
-            GameOver = _state.GameOver,
-            GoalUnlocked = _state.GoalUnlocked,
-            LastEffect = _state.LastItemEffect
-        };
-    }
-
-    public ItemGridDTO GetItemGridDTO(bool includeSprites = false) => _gameService.GetItemGridDTO(includeSprites);
-
-    public MazeGridDTO GetMazeGridDTO( bool includeSprites = false) => _gameService.GetMazeGridDTO(includeSprites);
-
-    public PlayerDTO GetPlayerDTO(bool includeAnimations = false) => _gameService.GetPlayerDTO(includeAnimations);
-
-    public SoundEffectMapDTO GetSoundEffects() => SoundEffectService.GetSoundMap();
-
-    public MusicPlaylistDTO GetMusicPlaylist() => MusicPlaylistService.GetPlaylist();
+    
 }
