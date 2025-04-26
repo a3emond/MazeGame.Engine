@@ -6,6 +6,7 @@ This API provides a lightweight backend to manage a Maze Game session, including
 
 ## Base URL
 
+
 ```
 https://localhost:7223/
 ```
