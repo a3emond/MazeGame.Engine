@@ -6,6 +6,7 @@ namespace MazeGame.API
     {
         public static void Main(string[] args)
         {
+            // Create a new web application builder
             var builder = WebApplication.CreateBuilder(args);
 
             // Set Kestrel server to listen explicitly on localhost:5055
