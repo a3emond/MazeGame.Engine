@@ -31,18 +31,18 @@ public class RecursiveBacktrackingMaze : IMazeAlgorithm
 
         maze.Grid[realCx, realCy] = (int)TileType.FloorCenter; // Correctly map logical to real coordinates
 
-        foreach (var (dx, dy) in MazeUtils.RandomizedDirections())
+        foreach (var (dx, dy) in MazeBuilderUtils.RandomizedDirections())
         {
             var nx = cx + dx * 2; // Move two logical cells in the direction
             var ny = cy + dy * 2;
             var realNx = nx * 5;
             var realNy = ny * 5;
 
-            if (MazeUtils.IsWithinBounds(maze, realNx, realNy) && !visited[nx, ny])
+            if (MazeAnalysis.IsWithinBounds(maze, realNx, realNy) && !visited[nx, ny])
             {
                 // Remove walls between logical cells, maintaining 3-tile-wide paths
-                MazeUtils.CarvePath(maze, realCx, realCy, realCx + dx * 5, realCy + dy * 5);
-                MazeUtils.CarvePath(maze, realCx + dx * 5, realCy + dy * 5, realNx, realNy);
+                MazeBuilderUtils.CarvePath(maze, realCx, realCy, realCx + dx * 5, realCy + dy * 5);
+                MazeBuilderUtils.CarvePath(maze, realCx + dx * 5, realCy + dy * 5, realNx, realNy);
 
                 GenerateDfs(maze, nx, ny, visited);
             }

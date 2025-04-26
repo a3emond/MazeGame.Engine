@@ -51,7 +51,7 @@ public class MazeAlgorithmDrunkardsWalk : IMazeAlgorithm
             if (!visited[newX, newY])
             {
                 // Carve a path between the current position and the new position
-                MazeUtils.CarvePath(maze, x, y, newX, newY);
+                MazeBuilderUtils.CarvePath(maze, x, y, newX, newY);
 
                 x = newX;
                 y = newY;
@@ -77,7 +77,7 @@ public class MazeAlgorithmDrunkardsWalk : IMazeAlgorithm
             for (var x = 1; x < maze.Width - 1; x++)
                 if (maze.Grid[x, y] == (int)TileType.FloorCenter && !regions.ContainsKey((x, y)))
                 {
-                    MazeUtils.FloodFill(maze, x, y, regionId, regions);
+                    MazeBuilderUtils.FloodFill(maze, x, y, regionId, regions);
                     regionId++;
                 }
 
@@ -98,7 +98,7 @@ public class MazeAlgorithmDrunkardsWalk : IMazeAlgorithm
             var start = regionCenters[i];
             var end = regionCenters[i + 1];
 
-            MazeUtils.CarvePath(maze, start.x, start.y, end.x, end.y);
+            MazeBuilderUtils.CarvePath(maze, start.x, start.y, end.x, end.y);
         }
     }
 }
