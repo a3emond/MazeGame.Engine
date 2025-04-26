@@ -1,0 +1,54 @@
+# .github/workflows/deploy-api.yml
+
+name: Build and Deploy MazeGame.API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up .NET environment
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0'
+
+    # Step 3: Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore MazeGame.API/MazeGame.API.csproj
+
+    # Step 4: Publish MazeGame.API
+    - name: Publish MazeGame.API
+      run: dotnet publish MazeGame.API/MazeGame.API.csproj -c Release -o publish
+
+    # Step 5: Deploy Published Files to Server
+    - name: Deploy Published Files to Server
+      run: |
+        sudo apt-get update && sudo apt-get install -y sshpass
+        
+        # Fix permissions (optional, in case)
+        sshpass -p "${{ secrets.SERVER_SSH_PASSWORD }}" \
+        ssh -o StrictHostKeyChecking=no a3emond@aedev.pro "
+          sudo chown -R a3emond:a3emond /var/www/mazeapi &&
+          sudo chmod -R u+w /var/www/mazeapi
+        "
+        
+        # Sync publish files to the server
+        sshpass -p "${{ secrets.SERVER_SSH_PASSWORD }}" \
+        rsync -avz --delete --checksum ./publish/ a3emond@aedev.pro:/var/www/mazeapi/
+
+        # Restart the mazeapi service
+        sshpass -p "${{ secrets.SERVER_SSH_PASSWORD }}" \
+        ssh -o StrictHostKeyChecking=no a3emond@aedev.pro "sudo systemctl restart mazeapi"
+
+      env:
+        SERVER_SSH_PASSWORD: ${{ secrets.SERVER_SSH_PASSWORD }}
