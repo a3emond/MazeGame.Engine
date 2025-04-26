@@ -1,4 +1,3 @@
-
 using MazeGame.Engine.API;
 
 namespace MazeGame.API
@@ -9,29 +8,25 @@ namespace MazeGame.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Set Kestrel server to listen explicitly on localhost:5055
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenLocalhost(5055); // Internal port for the app
+            });
+
+            // Add services to the container
             builder.Services.AddSingleton<GameState>();
             builder.Services.AddSingleton<MazeGameService>();
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddEndpointsApiExplorer();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
-
-            app.UseHttpsRedirection();
+            // Swagger is completely removed from production
 
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }
