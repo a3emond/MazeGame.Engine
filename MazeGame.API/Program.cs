@@ -16,8 +16,18 @@ namespace MazeGame.API
             });
 
             // Add services to the container
-            builder.Services.AddSingleton<GameState>();
-            builder.Services.AddSingleton<MazeGameService>();
+            builder.Services.AddScoped<GameState>();
+            builder.Services.AddScoped<MazeGameService>();
+            builder.Services.AddSingleton<GameServiceFactory>();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Kill session after 30 min idle
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddHttpContextAccessor(); // Needed for GameServiceFactory to work
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -33,6 +43,7 @@ namespace MazeGame.API
 
 
             var app = builder.Build();
+            app.UseSession();
 
             app.UseCors("AllowAll");
             app.UseAuthorization();

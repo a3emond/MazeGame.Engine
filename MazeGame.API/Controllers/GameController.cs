@@ -10,75 +10,85 @@ namespace MazeGame.API.Controllers
     [Route("api/game")]
     public class GameController : ControllerBase
     {
-        private readonly MazeGameService _service;
+        private readonly GameServiceFactory _factory;
 
-        public GameController(MazeGameService service)
+        public GameController(GameServiceFactory factory)
         {
-            _service = service;
+            _factory = factory;
         }
 
         [HttpPost("init")]
         public IActionResult InitializeMaze([FromBody] InitRequest request)
         {
-            _service.InitializeMaze(request.Algorithm);
+            var service = _factory.GetOrCreateService();
+            service.ResetGameState(); // Clear previous session if needed
+            service.InitializeMaze(request.Algorithm);
             return Ok();
         }
 
         [HttpPost("start")]
         public IActionResult StartGame()
         {
-            _service.StartGame();
+            var service = _factory.GetOrCreateService();
+            service.StartGame();
             return Ok();
         }
 
         [HttpPost("move")]
         public IActionResult MovePlayer([FromBody] MoveRequest request)
         {
-            _service.MovePlayer(request.Direction);
+            var service = _factory.GetOrCreateService();
+            service.MovePlayer(request.Direction);
             return Ok();
         }
-
 
         [HttpGet("state")]
         public ActionResult<GameSessionDTO> GetGameState()
         {
-            return Ok(_service.GetSession());
+            var service = _factory.GetOrCreateService();
+            return Ok(service.GetSession());
         }
 
         [HttpGet("maze")]
         public ActionResult<MazeGridDTO> GetMazeGrid()
         {
-            return Ok(_service.GetMazeGridDTO());
+            var service = _factory.GetOrCreateService();
+            return Ok(service.GetMazeGridDTO());
         }
 
         [HttpGet("items")]
         public ActionResult<ItemGridDTO> GetItemGrid()
         {
-            return Ok(_service.GetItemGridDTO());
+            var service = _factory.GetOrCreateService();
+            return Ok(service.GetItemGridDTO());
         }
 
         [HttpGet("player")]
         public ActionResult<PlayerDTO> GetPlayer()
         {
-            return Ok(_service.GetPlayerDTO());
+            var service = _factory.GetOrCreateService();
+            return Ok(service.GetPlayerDTO());
         }
 
         [HttpGet("algorithms")]
         public ActionResult<MazeAlgorithmListDTO> GetAvailableAlgorithms()
         {
-            return Ok(_service.GetAvailableAlgorithms());
+            var service = _factory.GetOrCreateService();
+            return Ok(service.GetAvailableAlgorithms());
         }
 
         [HttpGet("soundeffects")]
         public ActionResult<SoundEffectMapDTO> GetSoundEffects()
         {
-            return Ok(_service.GetSoundEffectMapDto());
+            var service = _factory.GetOrCreateService();
+            return Ok(service.GetSoundEffectMapDto());
         }
 
         [HttpGet("music")]
         public ActionResult<MusicPlaylistDTO> GetMusicPlaylist()
         {
-            return Ok(_service.GetMusicPlaylistDto());
+            var service = _factory.GetOrCreateService();
+            return Ok(service.GetMusicPlaylistDto());
         }
     }
 }

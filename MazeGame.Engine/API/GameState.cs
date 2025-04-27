@@ -34,4 +34,23 @@ public class GameState
 
 
     public ItemEffectResult? LastItemEffect { get; set; }
+
+    public void Reset()
+    {
+        MazeInitialized = false;
+        GameStarted = false;
+        GameRunning = false;
+        GameOver = false;
+        SelectedAlgorithm = MazeAlgorithmType.RecursiveBacktracking;
+        Maze = null;
+        Player = null;
+        CurrentHearts = MaxHearts;
+        GoalUnlocked = false;
+        StatusEffect = null;
+        LastItemEffect = null;
+        InventorySlots = new string[3];
+        GameStartTime = DateTime.MinValue;
+        TimeLimit = TimeSpan.FromMinutes(5);
+    }
+
 }

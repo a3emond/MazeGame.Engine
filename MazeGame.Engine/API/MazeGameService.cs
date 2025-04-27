@@ -19,6 +19,12 @@ namespace MazeGame.Engine.API
         // 📌 Gameplay Actions
         // =====================
 
+        public void ResetGameState()
+        {
+            _state.Reset();
+            _core = new MazeGameCore(this, _state);
+        }
+
         public void InitializeMaze(MazeAlgorithmType algorithm) => _core.InitializeMaze(algorithm);
 
         public void StartGame() => _core.StartGame();
