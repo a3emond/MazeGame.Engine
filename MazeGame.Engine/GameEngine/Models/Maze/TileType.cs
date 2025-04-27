@@ -24,8 +24,8 @@ public enum TileType
     WallCornerTopRight = 14,
     WallCornerBottomLeft = 15,
     WallCornerBottomRight = 16,
-    WallInnerCornerTopLeft = 17,
-    WallInnerCornerTopRight = 18,
+    //WallInnerCornerTopLeft = 17,
+    //WallInnerCornerTopRight = 18,
     WallInnerCornerBottomLeft = 19,
     WallInnerCornerBottomRight = 20,
 

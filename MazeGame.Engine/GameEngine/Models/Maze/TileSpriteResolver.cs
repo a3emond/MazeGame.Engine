@@ -36,8 +36,8 @@ public static class TileSpriteResolver
             TileType.WallCornerBottomRight => "/assets/textures/wall_corner_bottom_right.png",
 
             // Inner Corners
-            TileType.WallInnerCornerTopLeft => "/assets/textures/wall_inner_corner_top_left_1.png",
-            TileType.WallInnerCornerTopRight => "/assets/textures/wall_inner_corner_top_right_1.png",
+            //TileType.WallInnerCornerTopLeft => "/assets/textures/wall_inner_corner_top_left_1.png",
+            //TileType.WallInnerCornerTopRight => "/assets/textures/wall_inner_corner_top_right_1.png",
             TileType.WallInnerCornerBottomLeft => "/assets/textures/wall_inner_corner_bottom_left_1.png",
             TileType.WallInnerCornerBottomRight => "/assets/textures/wall_inner_corner_bottom_right_1.png",
 
