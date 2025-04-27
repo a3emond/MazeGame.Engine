@@ -66,6 +66,10 @@ namespace MazeGame.Engine.API
             return new GameLoadDTO
             {
                 TileGrid = tileGrid,
+                WalkableTiles = _state.Maze.WalkableTiles
+                    .Select(t => new WalkableTileDTO { X = t.x, Y = t.y })
+                    .ToList(),
+
                 MazeWidth = _state.Maze.Width,
                 MazeHeight = _state.Maze.Height,
                 Items = items,

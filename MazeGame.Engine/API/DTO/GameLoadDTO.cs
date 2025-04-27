@@ -5,6 +5,8 @@ namespace MazeGame.Engine.API.DTO;
 public class GameLoadDTO
 {
     public List<string> TileGrid { get; set; } = new(); // 1D array of tile sprite URLs
+    public List<WalkableTileDTO> WalkableTiles { get; set; } = new();
+
     public int MazeWidth { get; set; }
     public int MazeHeight { get; set; }
 
