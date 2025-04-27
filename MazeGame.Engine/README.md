@@ -1,22 +1,20 @@
-﻿# 🧩 Maze Game Backend
+﻿# Maze Game Backend
 
-This is the backend logic core for the **Maze Game**, fully implemented in C# and built with modularity and API readiness in mind. It is **renderer-agnostic** and manages all state, rules, item logic, maze generation, and session lifecycle internally.
+This project is the backend logic for the Maze Game, implemented in C#.  
+It is fully modular, frontend-agnostic, and manages maze generation, game state, player logic, item pickups, sound mapping, and session persistence.
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 API/
 ├── DTO/
+│   ├── GameLoadDTO.cs
 │   ├── GameSessionDTO.cs
-│   ├── GameStateDTO.cs
 │   ├── ItemDTO.cs
-│   ├── ItemGridDTO.cs
 │   ├── MazeAlgorithmListDTO.cs
-│   ├── MazeGridDTO.cs
 │   ├── MusicPlaylistDTO.cs
-│   ├── PlayerDTO.cs
 │   └── SoundEffectMapDTO.cs
 ├── GameState.cs
 ├── MazeGameCore.cs
@@ -66,54 +64,54 @@ GameEngine/
 
 ---
 
-## 📤 Data Transfer Objects (DTOs)
+## Data Transfer Objects (DTOs)
 
-- **GameSessionDTO**: Full snapshot of session state
-- **GameStateDTO**: Lightweight state for frame sync (position, status, effects)
-- **MazeGridDTO**: Sprite-based or raw grid of the maze
-- **CompressedMazeGridDTO**: Variant using integer tiles + map
-- **ItemGridDTO**: Includes all map item instances + optional sprite mapping
-- **PlayerDTO**: Direction, position, vision radius, optional animation map
-- **SoundEffectMapDTO** & **MusicPlaylistDTO**: Audio mappings for frontend
-
----
-
-## 🧠 Core Logic
-
-- `MazeGameCore`: Orchestrates player actions, win/loss logic, and core flow.
-- `MazeGameService`: Clean, controller-friendly entry point for exposing core logic.
-- `GameState`: The full in-memory game session state.
+- `GameLoadDTO`: Full maze, items, player animations, and startup configuration
+- `GameSessionDTO`: Partial live session state for saving and restoring mid-game
+- `ItemDTO`: Flat representation of placed items
+- `MazeAlgorithmListDTO`: Available maze generation algorithms
+- `MusicPlaylistDTO`: List of music tracks available for in-game background
+- `SoundEffectMapDTO`: Mapping of game events to sound effect audio paths
 
 ---
 
-## 🔁 Gameplay Flow
+## Core Logic
 
-1. **Maze Generation**: Randomized + item spawning
-2. **Player Start**: Game begins on `StartGame()`
-3. **Movement / Action**: Server-side player logic + item pickup effects
-4. **Timer & Status**: Win/loss determined by goal or hearts/time
-5. **State Exposure**: DTOs can be sent as-is to frontend
+- `MazeGameCore`: Manages maze generation, player movement, item pickups, win/lose conditions
+- `MazeGameService`: API layer for exposing clean DTOs to the frontend
+- `GameState`: The in-memory persistent structure for all session data
 
 ---
 
-## 🧩 Maze System
+## Gameplay Flow
 
-- Multiple generation algorithms supported via `MazeAlgorithmType`
-- Processed tile types for pixel-perfect rendering
-- Centralized `TileProcessor` for all structure logic
-
----
-
-## 🔊 Audio System
-
-- `AudioTracks.cs` lists background tracks and SFX
-- Two services (`MusicPlaylistService` and `SoundEffectService`) expose frontend-ready maps
+1. Maze Generation: Randomized maze built server-side
+2. Player Spawn: Start position initialized
+3. Player Movement: Movement validation, walkability check, item pickups
+4. Game Progression: Pickup effects applied (heal, damage, unlock goal)
+5. Session Save/Restore: Game state can be serialized and restored by frontend periodically
 
 ---
 
-## ✨ Highlights
+## Maze System
 
-- Clean separation of concerns
-- Fully testable backend game engine
-- Easily integratable with any rendering frontend (WebGL, Canvas2D, Unity, etc.)
-- Minimal state transfer, optimized for realtime gameplay
+- Multiple procedural algorithms available
+- Tile types mapped directly to frontend-renderable sprite paths
+- Walkability handled at tile level
+- Dynamic light radius for player visibility
+
+---
+
+## Audio System
+
+- `MusicPlaylistService` provides shuffled music playlists
+- `SoundEffectService` provides sound mappings for heal, damage, teleport, and other events
+
+---
+
+## Highlights
+
+- Clean modular structure
+- Optimized session handling for smooth reloading and recovery
+- Minimal data transmission (full maze sent once, session states afterward)
+- Frontend-agnostic API design, can support WebGL, Canvas2D, or Unity frontends

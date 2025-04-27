@@ -42,7 +42,6 @@ namespace MazeGame.Engine.API.DTO
                 PlayerX = state.PlayerX,
                 PlayerY = state.PlayerY,
                 LastMoveDirection = state.LastMoveDirection,
-                AnimationFrame = state.AnimationFrame,
 
                 TimerSecondsLeft = (int)Math.Max(0, (state.TimeLimit - (DateTime.Now - state.GameStartTime)).TotalSeconds),
 

@@ -34,13 +34,7 @@ namespace MazeGame.API.Controllers
             return Ok();
         }
 
-        [HttpPost("move")]
-        public IActionResult MovePlayer([FromBody] MoveRequest request)
-        {
-            var service = _factory.GetOrCreateService();
-            service.MovePlayer(request.Direction);
-            return Ok();
-        }
+        
 
         [HttpGet("state")]
         public ActionResult<GameSessionDTO> GetGameState()
@@ -49,26 +43,7 @@ namespace MazeGame.API.Controllers
             return Ok(service.GetSession());
         }
 
-        [HttpGet("maze")]
-        public ActionResult<MazeGridDTO> GetMazeGrid()
-        {
-            var service = _factory.GetOrCreateService();
-            return Ok(service.GetMazeGridDTO());
-        }
-
-        [HttpGet("items")]
-        public ActionResult<ItemGridDTO> GetItemGrid()
-        {
-            var service = _factory.GetOrCreateService();
-            return Ok(service.GetItemGridDTO());
-        }
-
-        [HttpGet("player")]
-        public ActionResult<PlayerDTO> GetPlayer()
-        {
-            var service = _factory.GetOrCreateService();
-            return Ok(service.GetPlayerDTO());
-        }
+        
 
         [HttpGet("algorithms")]
         public ActionResult<MazeAlgorithmListDTO> GetAvailableAlgorithms()
@@ -90,5 +65,38 @@ namespace MazeGame.API.Controllers
             var service = _factory.GetOrCreateService();
             return Ok(service.GetMusicPlaylistDto());
         }
+
+        [HttpPost("load")]
+        public ActionResult<GameLoadDTO> LoadGame([FromBody] LoadRequest? request)
+        {
+            var service = _factory.GetOrCreateService();
+            service.ResetGameState();
+
+            // Determine algorithm
+            MazeAlgorithmType algorithm = MazeAlgorithmType.RecursiveBacktracking; // Default
+
+            if (!string.IsNullOrEmpty(request?.Algorithm))
+            {
+                if (Enum.TryParse<MazeAlgorithmType>(request.Algorithm, ignoreCase: true, out var parsed))
+                {
+                    algorithm = parsed;
+                }
+            }
+
+            service.InitializeMaze(algorithm);
+            service.StartGame();
+
+            var dto = service.BuildGameLoadDTO();
+            return Ok(dto);
+        }
+
+        [HttpPost("state/save")]
+        public IActionResult SaveGameState([FromBody] GameSessionDTO sessionDto)
+        {
+            var service = _factory.GetOrCreateService();
+            service.SetSession(sessionDto);
+            return Ok();
+        }
+
     }
 }

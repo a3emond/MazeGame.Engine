@@ -5,8 +5,7 @@ public class Player
     public int X { get; private set; }
     public int Y { get; private set; }
     public int LightRadius { get; private set; } = 3;
-    public string? Direction { get; private set; }
-    public int AnimationFrame { get; private set; } = 0;
+    public string? Direction { get; set; }
 
 
     public Player(int startX, int startY)
@@ -36,7 +35,7 @@ public class Player
     public void SetDirection(string direction)
     {
         Direction = direction;
-        AnimationFrame = (AnimationFrame + 1) % 4; // Cycle 0-1-2-3
     }
+
 
 }
