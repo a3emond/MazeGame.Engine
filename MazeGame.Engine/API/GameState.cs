@@ -12,6 +12,11 @@ public class GameState
     public Player? Player { get; set; }
     public FogOfWar FogOfWar { get; set; } = new();
 
+    public int PlayerX => Player?.X ?? 0;
+    public int PlayerY => Player?.Y ?? 0;
+    public string LastMoveDirection => Player?.Direction ?? "down";
+    public int AnimationFrame => Player?.AnimationFrame ?? 0;
+
     public bool GameStarted { get; set; }
     public bool GameRunning { get; set; }
     public bool MazeInitialized { get; set; }

@@ -7,6 +7,8 @@ namespace MazeGame.Engine.API.DTO
         public int Y { get; set; }
         public string Direction { get; set; } = "down";
         public int LightRadius { get; set; }
+        public int AnimationFrame { get; set; } = 0;
+
         public Dictionary<string, string[]>? Animations { get; set; } // Optional animation map
 
         public static PlayerDTO From(Player player, bool includeAnimations = false)
@@ -17,6 +19,7 @@ namespace MazeGame.Engine.API.DTO
                 Y = player.Y,
                 Direction = player.Direction ?? "down",
                 LightRadius = player.LightRadius,
+                AnimationFrame = player.AnimationFrame,
                 Animations = includeAnimations ? PlayerSpriteResolver.GetAnimations() : null
             };
         }

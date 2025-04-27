@@ -15,6 +15,10 @@ namespace MazeGame.Engine.API.DTO
         public double CurrentHearts { get; set; }
         public string[] InventorySlots { get; set; } = new string[3];
         public string? StatusEffect { get; set; }
+        public int PlayerX { get; set; }
+        public int PlayerY { get; set; }
+        public string LastMoveDirection { get; set; } = "down";
+        public int AnimationFrame { get; set; }
 
         public int TimerSecondsLeft { get; set; } // (calculated when sent)
 
@@ -34,6 +38,11 @@ namespace MazeGame.Engine.API.DTO
                 CurrentHearts = state.CurrentHearts,
                 InventorySlots = state.InventorySlots,
                 StatusEffect = state.StatusEffect,
+
+                PlayerX = state.PlayerX,
+                PlayerY = state.PlayerY,
+                LastMoveDirection = state.LastMoveDirection,
+                AnimationFrame = state.AnimationFrame,
 
                 TimerSecondsLeft = (int)Math.Max(0, (state.TimeLimit - (DateTime.Now - state.GameStartTime)).TotalSeconds),
 
