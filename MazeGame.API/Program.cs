@@ -6,29 +6,28 @@ namespace MazeGame.API
     {
         public static void Main(string[] args)
         {
-            // Create a new web application builder
             var builder = WebApplication.CreateBuilder(args);
 
-            // Set Kestrel server to listen explicitly on localhost:5055
+            // Configure Kestrel to listen only on localhost:5055
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
-                serverOptions.ListenAnyIP(5055); // Accept requests from any IP address
+                serverOptions.ListenLocalhost(5055);
             });
 
-
             // Add services to the container
-            builder.Services.AddScoped<GameState>();
-            builder.Services.AddScoped<MazeGameService>();
-            builder.Services.AddSingleton<GameServiceFactory>();
+            builder.Services.AddDistributedMemoryCache(); 
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // Kill session after 30 min idle
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
 
-            builder.Services.AddHttpContextAccessor(); // Needed for GameServiceFactory to work
+            builder.Services.AddHttpContextAccessor(); // Needed for GameServiceFactory to access Session
 
+            builder.Services.AddScoped<GameState>();
+            builder.Services.AddScoped<MazeGameService>();
+            builder.Services.AddSingleton<GameServiceFactory>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -42,13 +41,14 @@ namespace MazeGame.API
                 });
             });
 
-
             var app = builder.Build();
-            app.UseSession();
 
+            app.UseSession();         // <--- Must come early
             app.UseCors("AllowAll");
             app.UseAuthorization();
+
             app.MapControllers();
+
             app.Run();
         }
     }
