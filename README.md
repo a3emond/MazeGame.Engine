@@ -1,17 +1,16 @@
 # Maze Game Engine API
 
-This API provides a lightweight backend to manage a Maze Game session, including maze generation, player movement, item pickup, sound effects, and session state management.
+This API provides a lightweight backend to manage a Maze Game session, including maze generation, player movement, item pickup, sound effects, music, and session state management.
 
 ---
 
 ## Base URL
 
-
 ```
 https://localhost:7223/
 ```
 
-All endpoints below assume this base.
+All endpoints below assume this base URL.
 
 ---
 
@@ -19,13 +18,9 @@ All endpoints below assume this base.
 
 | Method | URL | Purpose |
 |:---|:---|:---|
-| `POST` | `/api/game/init` | Initialize maze generation with a selected algorithm |
-| `POST` | `/api/game/start` | Start the game timer and session |
-| `POST` | `/api/game/move` | Move player in a given direction |
-| `GET` | `/api/game/state` | Get current game session state |
-| `GET` | `/api/game/maze` | Get the maze grid (flattened array) |
-| `GET` | `/api/game/items` | Get all placed items |
-| `GET` | `/api/game/player` | Get player information |
+| `POST` | `/api/game/load` | Initialize maze generation, start the game, and return full GameLoadDTO |
+| `GET` | `/api/game/state` | Get current game session state (GameSessionDTO) |
+| `POST` | `/api/game/state/save` | Save current frontend session (GameSessionDTO) |
 | `GET` | `/api/game/algorithms` | Get available maze generation algorithms |
 | `GET` | `/api/game/soundeffects` | Get available sound effect mappings |
 | `GET` | `/api/game/music` | Get available music playlist |
@@ -34,143 +29,90 @@ All endpoints below assume this base.
 
 ## Testing Procedure
 
-You can test using ThunderClient, Postman, or `curl`.
+You can test using ThunderClient, Postman, Swagger UI, or `curl`.
 
 ---
 
-### 1. Initialize Maze
+### 1. Load Game
 
-**Endpoint:**  
+**Endpoint:**
 ```
-POST /api/game/init
+POST /api/game/load
 ```
 
-**Body (JSON):**
+**Body (JSON) Optional:**
 ```json
 {
-  "algorithm": 0
+  "algorithm": "RecursiveBacktracking"
 }
 ```
-
-Where `algorithm` is the enum index:
-- `0` = RecursiveBacktracking
-- `1` = Prim
-- `2` = Kruskal (if available)
+If omitted, defaults to `RecursiveBacktracking`.
 
 **Example curl:**
 ```bash
-curl.exe -X POST https://localhost:7223/api/game/init -H "Content-Type: application/json" -d "{\"algorithm\":0}" -k
+curl.exe -X POST https://localhost:7223/api/game/load -H "Content-Type: application/json" -d "{\"algorithm\":\"Prim\"}" -k
 ```
 
 ---
 
-### 2. Start Game
+### 2. Get Current Session State
 
-**Endpoint:**  
-```
-POST /api/game/start
-```
-
-**No body required.**
-
-**Example curl:**
-```bash
-curl.exe -X POST https://localhost:7223/api/game/start -k
-```
-
----
-
-### 3. Move Player
-
-**Endpoint:**  
-```
-POST /api/game/move
-```
-
-**Body (JSON):**
-```json
-{
-  "direction": "up"
-}
-```
-Allowed directions: `"up"`, `"down"`, `"left"`, `"right"`
-
-**Example curl:**
-```bash
-curl.exe -X POST https://localhost:7223/api/game/move -H "Content-Type: application/json" -d "{\"direction\":\"up\"}" -k
-```
-
----
-
-### 4. Get Game Session State
-
-**Endpoint:**  
+**Endpoint:**
 ```
 GET /api/game/state
 ```
 
-**Returns:**  
-- Game started/over flags
-- Current hearts
+**Returns:**
+- Game started / running / over flags
+- Player position
+- Health, inventory, goal status
 - Timer seconds left
-- Last item effects
 
----
-
-### 5. Get Maze Grid
-
-**Endpoint:**  
-```
-GET /api/game/maze
-```
-
-**Returns:**
-- `width`, `height`
-- Flattened `grid` array (1D list of tiles)
-- (Optional) Sprite map
-
-Tiles are reconstructed on frontend with:
-```javascript
-const index = (y * width) + x;
-const tileType = grid[index];
+**Example curl:**
+```bash
+curl.exe -X GET https://localhost:7223/api/game/state -k
 ```
 
 ---
 
-### 6. Get Items
+### 3. Save Updated Session State
 
-**Endpoint:**  
+**Endpoint:**
 ```
-GET /api/game/items
+POST /api/game/state/save
 ```
 
-**Returns:**
-- List of all collectible items
-- Each item has `x`, `y`, `name`, and interaction flags
-- (Optional) Item sprite map
+**Body (JSON):** (example after player moves)
+```json
+{
+  "gameStarted": true,
+  "gameRunning": true,
+  "gameOver": false,
+  "mazeInitialized": true,
+  "goalUnlocked": false,
+  "maxHearts": 5,
+  "currentHearts": 2.5,
+  "inventorySlots": ["", "", ""],
+  "statusEffect": null,
+  "playerX": 5,
+  "playerY": 3,
+  "lastMoveDirection": "down",
+  "animationFrame": 2,
+  "timerSecondsLeft": 180,
+  "lastItemEffect": null
+}
+```
 
-Frontend should check items by matching `(x, y)` coordinates.
+**Example curl:**
+```bash
+curl.exe -X POST https://localhost:7223/api/game/state/save -H "Content-Type: application/json" -d "{...}" -k
+```
 
 ---
 
-### 7. Get Player Information
+### 4. Get Available Maze Algorithms
 
-**Endpoint:**  
-```
-GET /api/game/player
-```
-
-**Returns:**
-- Player `x`, `y`
-- Facing direction
-- Light radius
-- (Optional) Animation sprite mappings
-
----
-
-### 8. Get Available Maze Algorithms
-
-**Endpoint:**  
+**Endpoint:**
 ```
 GET /api/game/algorithms
 ```
@@ -178,17 +120,15 @@ GET /api/game/algorithms
 **Returns:**
 ```json
 {
-  "availableAlgorithms": ["RecursiveBacktracking", "Prim", "Kruskal"]
+  "availableAlgorithms": ["RecursiveBacktracking", "Prims", "BSP", "DrunkardsWalk"]
 }
 ```
 
-Use this list to populate algorithm selection in frontend.
-
 ---
 
-### 9. Get Sound Effects
+### 5. Get Sound Effects Mapping
 
-**Endpoint:**  
+**Endpoint:**
 ```
 GET /api/game/soundeffects
 ```
@@ -197,17 +137,21 @@ GET /api/game/soundeffects
 ```json
 {
   "soundEffects": {
-    "Pickup": "pickup.wav",
-    "TrapDamage": "trap_damage.wav"
+    "Heal": "/assets/audio/potion_pickup.wav",
+    "PowerUp": "/assets/audio/powerup.wav",
+    "Teleport": "/assets/audio/teleport.wav",
+    "TrapDamage": "/assets/audio/trap_damage.wav",
+    "Win": "/assets/audio/win.wav",
+    "GameOver": "/assets/audio/gameover.wav"
   }
 }
 ```
 
 ---
 
-### 10. Get Music Playlist
+### 6. Get Music Playlist
 
-**Endpoint:**  
+**Endpoint:**
 ```
 GET /api/game/music
 ```
@@ -216,8 +160,9 @@ GET /api/game/music
 ```json
 {
   "tracks": [
-    "bright-loop.mp3",
-    "mysterious-theme.mp3"
+    "bright-electronic-loop-251871.mp3",
+    "cool-hip-hop-loop-275527.mp3",
+    "epic-hybrid-logo-157092.mp3"
   ]
 }
 ```
@@ -226,20 +171,29 @@ GET /api/game/music
 
 ## Notes
 
-- The API uses **in-memory session management** (no persistent database).
-- Maze grid is **flattened into a 1D array** for JSON serialization.
-- Items are sent as a **flat list** with positions.
-- Session state is lost on server restart unless persistence is added.
+- Full maze grid and items are sent once during `/load`.
+- No database storage: session is held in server memory.
+- Timer logic is handled by frontend after load.
+- Audio paths returned are ready for frontend preloading.
 
 ---
 
-## Important for Local Testing
+## Local Testing Tip
 
-For local testing with `curl` or ThunderClient, use the `-k` option to bypass SSL verification:
+Use the `-k` option in `curl` to ignore SSL warnings when testing on localhost:
 ```bash
 -k
 ```
-This skips HTTPS certificate trust warnings when running locally with a development certificate.
 
 ---
 
+## Quick Frontend Tips
+
+- Maze tiles are 1D: Access with `index = (y * width) + x`.
+- Items are a flat list: Filter or match by `item.x` and `item.y`.
+- Player sprite frames rotate on movement client-side.
+- Light radius, fog-of-war and minimap are handled client-side.
+
+---
+
+Ready to connect to WebGL or Canvas2D based rendering engines!
