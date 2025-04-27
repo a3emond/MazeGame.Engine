@@ -6,7 +6,7 @@ namespace MazeGame.Engine.API
 {
     public class MazeGameService //	API exposure layer: Converts GameState into DTOs. Accepts frontend inputs (SetSession, MovePlayer, etc.)
     {
-        private readonly MazeGameCore _core;
+        private MazeGameCore _core;
         private readonly GameState _state;
 
         public MazeGameService(GameState state)
