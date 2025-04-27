@@ -12,8 +12,9 @@ namespace MazeGame.API
             // Set Kestrel server to listen explicitly on localhost:5055
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
-                serverOptions.ListenLocalhost(5055); // Internal port for the app
+                serverOptions.ListenAnyIP(5055); // Accept requests from any IP address
             });
+
 
             // Add services to the container
             builder.Services.AddScoped<GameState>();
