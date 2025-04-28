@@ -6,7 +6,7 @@
         {
             { ItemName.Key, "assets/sprites/items/keys/keys_1_1.png" },
             { ItemName.Potion, "assets/sprites/items/potions/potion_large_red.png" },
-            { ItemName.Lantern, "assets/sprites/items/torch.png" },
+            { ItemName.Lantern, "assets/sprites/items/torch/torch_1.png" },
             { ItemName.Compass, "assets/sprites/items/compass.png" },
             { ItemName.Door, "assets/sprites/items/door/door_1.png" },
             { ItemName.TeleportCircle, "assets/sprites/items/portal.png" },

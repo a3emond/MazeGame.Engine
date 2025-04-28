@@ -80,7 +80,7 @@ namespace MazeGame.Engine.API
                 PlayerAnimations = playerAnimations,
                 DefaultLightRadius = _state.Player.LightRadius,
                 MaxHearts = _state.MaxHearts,
-                StartingHearts = _state.CurrentHearts,
+                StartingHearts = 3.0,
                 TimeLimitSeconds = (int)_state.TimeLimit.TotalSeconds
             };
         }
